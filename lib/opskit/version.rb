@@ -1,3 +1,3 @@
-module Wordpresser
+module OpsKit
   VERSION = "0.1.0"
 end

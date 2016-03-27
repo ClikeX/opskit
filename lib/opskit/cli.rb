@@ -2,7 +2,7 @@ require 'thor'
 require 'thor/group'
 require 'yaml'
 
-module Wordpresser
+module OpsKit
   class OdinSon < Thor
 
     desc "apache CONF [TEMPLATE]", "generate apache vhost for with CONF [using TEMPLATE]"
@@ -11,7 +11,7 @@ module Wordpresser
       conf.keys.each do |key|
         conf[(key.to_sym rescue key) || key] = conf.delete(key)
       end
-      puts Wordpresser::VHost.new.gen_template( template, conf )
+      puts OpsKit::VHost.new.gen_template( template, conf )
     end
   end
 end

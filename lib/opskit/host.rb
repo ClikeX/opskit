@@ -1,4 +1,4 @@
-module Wordpresser
+module OpsKit
   class Host
 
   end

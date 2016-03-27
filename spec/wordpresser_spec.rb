@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Wordpresser do
+describe OpsKit do
   it 'has a version number' do
-    expect(Wordpresser::VERSION).not_to be nil
+    expect(OpsKit::VERSION).not_to be nil
   end
 
   it 'does something useful' do
