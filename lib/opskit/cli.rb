@@ -11,7 +11,7 @@ module OpsKit
       conf.keys.each do |key|
         conf[(key.to_sym rescue key) || key] = conf.delete(key)
       end
-      puts OpsKit::VHost.new.gen_template( template, conf )
+      puts OpsKit::VHost.new.apache_template( template, conf )
     end
   end
 end

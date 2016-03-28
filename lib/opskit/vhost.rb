@@ -5,7 +5,9 @@ module OpsKit
       File.directory?('/etc/apache2/sites-available/')
     end
 
-    def gen_template( template = nil, options = {})
+    def nginx_available?; end
+
+    def apache_template( template = nil, options = {})
       raise NotImplementedError "Apache folder not available" unless self.apache_available?
 
       file_path = File.join( File.dirname(__FILE__), 'templates/apache.erb.conf' ) unless template
@@ -15,5 +17,8 @@ module OpsKit
       template = Erubis::Eruby.new(template)
       template.result(options)
     end
+
+    def nginx_template; end
+
   end
 end
