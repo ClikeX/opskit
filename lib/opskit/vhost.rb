@@ -1,24 +1,31 @@
 module OpsKit
   class VHost
+    PROVIDERS = [:apache, :nginx]
 
-    def apache_available?
-      File.directory?('/etc/apache2/sites-available/')
+    def initialize( provider = nil, conf = {} )
+      @provider = provider
+      @conf = conf
     end
 
-    def nginx_available?; end
+    def render
+      raise NotImplementedError "No template specified" unless @provider
 
-    def apache_template( template = nil, options = {})
-      raise NotImplementedError "Apache folder not available" unless self.apache_available?
-
-      file_path = File.join( File.dirname(__FILE__), 'templates/apache.erb.conf' ) unless template
-      file_path = template if template
+      if PROVIDERS.include? @provider.to_sym
+        file_path = File.join( File.dirname(__FILE__), "templates/#{ @provider }.erb.conf" )
+      else
+        file_path = @provider
+      end
 
       template = File.read( file_path )
-      template = Erubis::Eruby.new(template)
-      template.result(options)
+      vhost = Erubis::Eruby.new( template )
+      vhost.result(@conf)
     end
 
-    def nginx_template; end
-
+    def vhost_location
+      case @provider.to_sym
+      when :apache
+        "/etc/apache2/sites-available/#{ @conf[:url] }.conf"
+      end
+    end
   end
 end

@@ -4,14 +4,22 @@ require 'yaml'
 
 module OpsKit
   class OdinSon < Thor
+    class_option :dry, type: :boolean
 
-    desc "apache CONF [TEMPLATE]", "generate apache vhost for with CONF [using TEMPLATE]"
-    def apache(conf, template = nil )
+    desc "render TEMPLATE [CONF]", "generate apache vhost for TEMPLATE with [CONF] ."
+    def render(template, conf = '.opskit.yml')
       conf = YAML.load_file( conf )
       conf.keys.each do |key|
         conf[(key.to_sym rescue key) || key] = conf.delete(key)
       end
-      puts OpsKit::VHost.new.apache_template( template, conf )
+      vhost = OpsKit::VHost.new( template, conf )
+
+      if options[:dry]
+        puts vhost.render
+      else
+        #TODO Should write to site-available
+        puts vhost.vhost_location
+      end
     end
   end
 end
