@@ -2,6 +2,8 @@ module OpsKit
   class VHost
     PROVIDERS = [:apache, :nginx]
 
+    attr_reader :provider, :conf
+
     def initialize( provider = nil, conf = {} )
       @provider = provider
       @conf = conf
