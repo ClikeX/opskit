@@ -9,22 +9,14 @@ Gem::Specification.new do |spec|
   spec.authors       = ["ClikeX\n\n"]
   spec.email         = ["w.s.van.der.meulen@gmail.com"]
 
-  spec.summary       = %q{Simple tool to setup wordpress config}
-  spec.description   = %q{Simple tool to setup wordpress configs}
-  spec.homepage      = "http://ClikeX.github.io"
+  spec.summary       = %q{Command line tool to simplify setting up dev environments}
+  spec.description   = %q{
+                          This command line tool allows dev to easily set up their dev environments so they don't have to waste time.
+                        }
+  spec.homepage      = "https://github.com/ClikeX/opskit"
   spec.license       = "MIT"
 
-
-  # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
-  # delete this section to allow pushing this gem to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
-  else
-    raise "RubyGems 2.0 or newer is required to protect against public gem pushes."
-  end
-
   spec.files          = Dir['lib/**/*']
-  # spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "bin"
   spec.executables   << 'opskit'
   spec.require_paths = ["lib"]
