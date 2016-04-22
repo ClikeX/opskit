@@ -6,9 +6,9 @@ module OpsKit
   class OdinSon < Thor
     class_option :dry, type: :boolean
 
-    desc "render TEMPLATE [CONF]", "generate apache vhost for TEMPLATE with [CONF] ."
-    def render(template, conf = '.opskit.yml')
-      conf = YAML.load_file( conf )
+    desc "render TEMPLATE", "generate apache vhost for TEMPLATE."
+    def render(template = nil)
+      conf = YAML.load_file( '.opskit.yml' ) if File.exist? ( '.opskit.yml' )
       conf.keys.each do |key|
         conf[(key.to_sym rescue key) || key] = conf.delete(key)
       end
