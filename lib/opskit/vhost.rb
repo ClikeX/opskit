@@ -1,6 +1,6 @@
 module OpsKit
   class VHost
-    PROVIDERS = [:apache, :nginx]
+    PROVIDERS = Dir.entries( File.join( File.dirname(__FILE__), "templates/" ) ).select {|f| !File.directory? f}.map{ |e| e.split('.').first.to_sym }
 
     attr_reader :provider, :conf
 
@@ -14,8 +14,8 @@ module OpsKit
 
       if PROVIDERS.include? @provider.to_sym
         file_path = File.join( File.dirname(__FILE__), "templates/#{ @provider }.erb.conf" )
-      else
-        file_path = @provider
+      elsif @conf[ :template_path ]
+        file_path = @conf[ :template ]
       end
 
       template = File.read( file_path )
