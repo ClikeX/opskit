@@ -8,4 +8,4 @@
 /spec/reports/
 /tmp/
 
-conf.yml
+.opskit.yml
