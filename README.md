@@ -1,4 +1,4 @@
-[![Code Climate](https://codeclimate.com/github/ClikeX/opskit/badges/gpa.svg)](https://codeclimate.com/github/ClikeX/opskit)
+[![Code Climate](https://codeclimate.com/github/ClikeX/opskit/badges/gpa.svg)](https://codeclimate.com/github/ClikeX/opskit)[![Build Status](https://travis-ci.org/ClikeX/opskit.svg?branch=develop)](https://travis-ci.org/ClikeX/opskit)[![Build Status](https://drone.io/github.com/ClikeX/opskit/status.png)](https://drone.io/github.com/ClikeX/opskit/latest)
 
 OpsKit
 ======
