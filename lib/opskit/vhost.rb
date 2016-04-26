@@ -2,19 +2,16 @@ module OpsKit
   class VHost
     PROVIDERS = Dir.entries( File.join( File.dirname(__FILE__), "templates/" ) ).select {|f| !File.directory? f}.map{ |e| e.split('.').first.to_sym }
 
-    attr_reader :provider, :conf
+    attr_reader :conf
 
-    def initialize( provider = nil, conf = {} )
-      @provider = provider
+    def initialize( conf = {} )
       @conf = conf
     end
 
     def render
-      raise NotImplementedError "No template specified" unless @provider
-
-      if PROVIDERS.include? @provider.to_sym
-        file_path = File.join( File.dirname(__FILE__), "templates/#{ @provider }.erb.conf" )
-      elsif @conf[ :template_path ]
+      if PROVIDERS.include? @conf[ :template ].to_sym
+        file_path = File.join( File.dirname(__FILE__), "templates/#{ @conf[ :template ] }.erb.conf" )
+      elsif @conf[ :template ]
         file_path = @conf[ :template ]
       end
 

@@ -12,7 +12,7 @@ module OpsKit
       conf.keys.each do |key|
         conf[(key.to_sym rescue key) || key] = conf.delete(key)
       end
-      vhost = OpsKit::VHost.new( template, conf )
+      vhost = OpsKit::VHost.new( conf )
 
       if options[:dry]
         puts vhost.render
