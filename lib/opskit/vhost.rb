@@ -21,7 +21,7 @@ module OpsKit
     end
 
     def vhost_location
-      case @provider.to_sym
+      case @conf[ :template ].to_sym
       when :apache
         "/etc/apache2/sites-available/#{ @conf[:url] }.conf"
       end

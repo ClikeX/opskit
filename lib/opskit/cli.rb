@@ -1,25 +1,27 @@
 require 'thor'
-require 'thor/group'
+require 'thor/actions'
 require 'yaml'
 
 module OpsKit
   class OdinSon < Thor
-    class_option :dry, type: :boolean
+    include Thor::Actions
 
-    desc "render TEMPLATE", "generate apache vhost for TEMPLATE."
-    def render(template = nil)
-      conf = YAML.load_file( '.opskit.yml' ) if File.exist? ( '.opskit.yml' )
-      conf.keys.each do |key|
-        conf[(key.to_sym rescue key) || key] = conf.delete(key)
+    desc "export", "Generates vhost and host file config"
+    def export
+      conf = {}
+      conf[:url] = ask "What is the dev url?"
+      conf[:docroot] = ask "What is the docroot?"
+
+      if yes?("Is it a custom template? y/n")
+        conf[:template_path] = ask "What is the template path?"
+      else
+        conf[:template] = ask "What is the template?"
       end
+
       vhost = OpsKit::VHost.new( conf )
 
-      if options[:dry]
-        puts vhost.render
-      else
-        #TODO Should write to site-available
-        puts vhost.vhost_location
-      end
+      system "echo '#{vhost.render}' | sudo tee #{ vhost.vhost_location }"
+      system "echo '127.0.0.1\t#{ conf[:url]}' | sudo tee -a /etc/hosts"
     end
   end
 end
