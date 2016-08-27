@@ -15,7 +15,7 @@ module OpsKit
 
       OpsKit.configure name
 
-      if Dir.exists? OpsKit.configuration.project_root
+      if Dir.exist? OpsKit.configuration.project_root
         return if no? "This project already exists do you want to overwrite it?"
         clean name
       end
@@ -45,7 +45,7 @@ module OpsKit
     def clean (name)
       OpsKit.configure name
 
-      if Dir.exists? OpsKit.configuration.project_root
+      if Dir.exist? OpsKit.configuration.project_root
         return if no? "This will remove #{OpsKit.configuration.project_root} are you sure?"
         FileUtils.rm_rf(OpsKit.configuration.project_root)
       else
@@ -64,7 +64,7 @@ module OpsKit
         run "sudo a2dissite #{vhost.conf[:url]}"
 
         say "Remove #{vhost.vhost_location}", :cyan
-        if File.exists? vhost.vhost_location
+        if File.exist? vhost.vhost_location
           run "sudo rm #{vhost.vhost_location}"
         else
           say "Couldn't find #{vhost.vhost_location}", :red
