@@ -39,6 +39,23 @@ module OpsKit
         run "sudo service apache2 reload"
       end
 
+
+      pms = find_used_package_managers OpsKit.configuration.project_root
+      if yes? "Run the package managers? #{pms}"
+        commands = {
+          :bundler          => 'bundle install',
+          :npm              => 'npm install',
+          :composer         => 'composer install',
+          :git              => 'git submodule init && git submodule update',
+          :bower            => 'bower install'
+        }
+
+        inside OpsKit.configuration.project_root do
+          pms.each do |pm| 
+            run commands[pm]
+          end
+        end
+      end 
     end
 
     desc "clean", "Cleans a project from your system"
@@ -55,7 +72,11 @@ module OpsKit
       if yes? "clean vhost?"
 
         ask_for_url
-        vhost = OpsKit::VHost.new( {template: OpsKit.configuration.template, url: OpsKit.configuration.url, docroot: OpsKit.configuration.docroot } )
+        vhost = OpsKit::VHost.new(
+          template: OpsKit.configuration.template, 
+          url: OpsKit.configuration.url, 
+          docroot: OpsKit.configuration.docroot
+        )
 
         say "Removing the hosts entry for #{vhost.conf[:url]}", :cyan
         run "sed '/127.0.0.1 #{vhost.conf[:url]}/d' /etc/hosts | sudo tee /etc/hosts"
@@ -94,6 +115,24 @@ module OpsKit
         else
           OpsKit.configuration.docroot = "#{OpsKit.configuration.docroot}/#{path}"
         end
+      end
+
+      def find_used_package_managers dir
+        pms = []
+
+        file_to_pm = {
+          'Gemfile' => :bundler,
+          'composer.json' => :composer,
+          'package.json' => :npm,
+          'bower.json' => :bower,
+          '.gitmodules' => :git,
+        }
+
+        inside dir do
+          pms = `ls`.lines.map(&:chomp).select{ |f| file_to_pm.key?(f) }.map{ |f| file_to_pm[f]}
+        end   
+
+        pms
       end
     end
 
