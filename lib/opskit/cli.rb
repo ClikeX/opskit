@@ -39,7 +39,19 @@ module OpsKit
         run "sudo service apache2 reload"
       end
 
+      say "Looking for example files to copy"
+      example_files = find_example_files OpsKit.configuration.project_root
+      example_files.each do |example_file|
+        new_file = example_file.chomp(".example")
+        if yes? "Copy example file #{example_file} to #{new_file}?"
+          inside OpsKit.configuration.project_root do
+            run "cp #{example_file} #{new_file}"
+            run "nano #{new_file}"
+          end
+        end
+      end
 
+      say "Looking for package managers to run"
       pms = find_used_package_managers OpsKit.configuration.project_root
       if yes? "Run the package managers? #{pms}"
         commands = {
@@ -51,11 +63,11 @@ module OpsKit
         }
 
         inside OpsKit.configuration.project_root do
-          pms.each do |pm| 
+          pms.each do |pm|
             run commands[pm]
           end
         end
-      end 
+      end
     end
 
     desc "clean", "Cleans a project from your system"
@@ -73,8 +85,8 @@ module OpsKit
 
         ask_for_url
         vhost = OpsKit::VHost.new(
-          template: OpsKit.configuration.template, 
-          url: OpsKit.configuration.url, 
+          template: OpsKit.configuration.template,
+          url: OpsKit.configuration.url,
           docroot: OpsKit.configuration.docroot
         )
 
@@ -130,11 +142,20 @@ module OpsKit
 
         inside dir do
           pms = `ls`.lines.map(&:chomp).select{ |f| file_to_pm.key?(f) }.map{ |f| file_to_pm[f]}
-        end   
+        end
 
         pms
       end
-    end
 
+      def find_example_files dir
+        examples = []
+
+        inside dir do
+          examples = `find . | grep "\\.example"`.lines.map(&:chomp)
+        end
+
+        examples
+      end
+    end
   end
 end
