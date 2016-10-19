@@ -41,8 +41,12 @@ module OpsKit
 
       say "Looking for example files to copy"
       example_files = find_example_files OpsKit.configuration.project_root
+      puts example_files
+
       example_files.each do |example_file|
+
         new_file = example_file.chomp(".example")
+        new_file = new_file.chomp("-example")
         if yes? "Copy example file #{example_file} to #{new_file}?"
           inside OpsKit.configuration.project_root do
             run "cp #{example_file} #{new_file}"
@@ -90,11 +94,13 @@ module OpsKit
           docroot: OpsKit.configuration.docroot
         )
 
-        say "Removing the hosts entry for #{vhost.conf[:url]}", :cyan
-        run "sed '/127.0.0.1 #{vhost.conf[:url]}/d' /etc/hosts | sudo tee /etc/hosts"
+        if !vhost.conf[:url].to_s.empty?
+          say "Removing the hosts entry for #{vhost.conf[:url]}", :cyan
+          run "sed '/127.0.0.1 #{vhost.conf[:url]}/d' /etc/hosts | sudo tee /etc/hosts"
 
-        say "Disabling #{vhost.conf[:url]}", :cyan
-        run "sudo a2dissite #{vhost.conf[:url]}"
+          say "Disabling #{vhost.conf[:url]}", :cyan
+          run "sudo a2dissite #{vhost.conf[:url]}"
+        end
 
         say "Remove #{vhost.vhost_location}", :cyan
         if File.exist? vhost.vhost_location
@@ -151,7 +157,8 @@ module OpsKit
         examples = []
 
         inside dir do
-          examples = `find . | grep "\\.example"`.lines.map(&:chomp)
+          examples.concat `find . | grep "\\.example"`.lines.map(&:chomp)
+          examples.concat `find . | grep "\-example"`.lines.map(&:chomp)
         end
 
         examples
