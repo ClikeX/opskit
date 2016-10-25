@@ -6,8 +6,8 @@ OpsKit
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/opskit`. To experiment with that code, run `bin/console` for an interactive prompt.
 
 TODO:
-* Copy .env.example and ask for input on each var
-* Try to copy db from server with ask or capistrano config parsing
+* Intergrate project type checking for wordpress / ruby specific tasks
+* Try to copy db from seraver with ask or capistrano config parsing
 
 Installation
 ------------
@@ -33,7 +33,12 @@ $ gem install opskit
 Usage
 -----
 
-TODO: Write usage instructions here
+```
+Commands:
+  opskit clean           # Cleans a project from your system
+  opskit help [COMMAND]  # Describe available commands or one specific command
+  opskit setup           # Setup a project based on a git repository
+```
 
 Development
 -----------
