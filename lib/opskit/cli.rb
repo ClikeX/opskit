@@ -147,7 +147,7 @@ module OpsKit
         }
 
         inside dir do
-          pms = `ls`.lines.map(&:chomp).select{ |f| file_to_pm.key?(f) }.map{ |f| file_to_pm[f]}
+          pms = `ls -a`.lines.map(&:chomp).select{ |f| file_to_pm.key?(f) }.map{ |f| file_to_pm[f]}
         end
 
         pms
