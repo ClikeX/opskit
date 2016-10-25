@@ -45,8 +45,8 @@ module OpsKit
 
       example_files.each do |example_file|
 
-        new_file = example_file.chomp(".example")
-        new_file = new_file.chomp("-example")
+        new_file = example_file.sub(".example", '')
+        new_file = new_file.sub("-example", '')
         if yes? "Copy example file #{example_file} to #{new_file}?"
           inside OpsKit.configuration.project_root do
             run "cp #{example_file} #{new_file}"
