@@ -124,6 +124,7 @@ module OpsKit
       end
 
       def ask_for_docroot
+        run "ls -la #{OpsKit.configuration.docroot}"
         path = ask "What is the docroot? [#{OpsKit.configuration.docroot}]"
 
         return if path == "" || path == "/"
