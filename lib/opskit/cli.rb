@@ -149,11 +149,11 @@ module OpsKit
           run "git add composer.lock"
 
           default_commit = "Updated #{git_name} to #{new_version}"
-          commit = ask "What is the git commit?" [default_commit]
+          commit = ask "What is the git commit? [#{default_commit}]"
           commit = default_commit if commit.to_s == ''
 
-          run "git commit '#{commit}'"
-          run "git push --set-upstream #{git_branch}"
+          run "git commit -m '#{commit}'"
+          run "git push --set-upstream origin #{git_branch}"
         end
       end
     end
