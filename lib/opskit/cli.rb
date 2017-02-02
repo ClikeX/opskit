@@ -148,7 +148,7 @@ module OpsKit
           run "git add composer.json"
           run "git add composer.lock"
 
-          default_commit "Updated #{git_name} to #{new_version}"
+          default_commit = "Updated #{git_name} to #{new_version}"
           commit = ask "What is the git commit?" [default_commit]
           commit = default_commit if commit.to_s == ''
 
