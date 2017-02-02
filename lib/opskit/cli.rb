@@ -114,6 +114,45 @@ module OpsKit
       end
     end
 
+    desc "update an composer package", "Updates a composer project"
+    def update_composer (root)
+      pkg = ask "What package name to search versions for?"
+
+      return "#{root} does not exist" if !Dir.exist? root
+      inside root do
+        return "Not a git project" if !Dir.exist? ".git"
+        return "No composer file found" if !File.exist? "composer.json"
+        return "No bedrock project" if File.readlines("composer.json").grep(/webroot-installer/).size < 1
+
+        say File.readlines("composer.json").grep(/http/).join("")
+        if yes? "Fix https in composer?"
+          run "sed -i 's/http/https/g' composer.json"
+        end
+
+        run "grep #{pkg} composer.json"
+        old_version = ask "What was the old version"
+        new_version = ask "What is the new version"
+        git_name = ask "What is the git name (branch = update/?{{version}})"
+
+        git_branch = "update/#{git_name}#{new_version}"
+
+        run "git checkout -b #{git_branch}"
+        run "sed -i 's/#{old_version}/#{new_version}/g'"
+        run "composer update"
+        run "git diff"
+        if yes? "commit the changes?"
+          run "git add composer.json"
+          run "git add composer.lock"
+          default_commit "Updated #{git_name} to #{new_version}"
+          commit = ask "What is the git commit?" [default_commit]
+          commit = default_commit if commit.to_s == ''
+
+          run "git commit '#{commit}'"
+          run "git push --set-upstream #{git_branch}"
+        end
+      end
+    end
+
     no_commands do
       def ask_for_url
         url = ask "What is the dev url? [#{OpsKit.configuration.url}]"
