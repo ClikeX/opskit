@@ -124,6 +124,9 @@ module OpsKit
         return "No composer file found" if !File.exist? "composer.json"
         return "No bedrock project" if File.readlines("composer.json").grep(/webroot-installer/).size < 1
 
+        run "git status"
+        return if no? "git status looks okay?"
+
         say File.readlines("composer.json").grep(/http/).join("")
         if yes? "Fix https in composer?"
           run "sed -i 's/http/https/g' composer.json"
@@ -132,17 +135,19 @@ module OpsKit
         run "grep #{pkg} composer.json"
         old_version = ask "What was the old version"
         new_version = ask "What is the new version"
-        git_name = ask "What is the git name (branch = update/?{{version}})"
 
-        git_branch = "update/#{git_name}#{new_version}"
-
-        run "git checkout -b #{git_branch}"
-        run "sed -i 's/#{old_version}/#{new_version}/g'"
+        run "sed -i 's/#{old_version}/#{new_version}/g' composer.json"
         run "composer update"
         run "git diff"
+        run "git status"
         if yes? "commit the changes?"
+          git_name = ask "What is the git name (branch = update/?{{version}})"
+          git_branch = "update/#{git_name}#{new_version}"
+
+          run "git checkout -b #{git_branch}"
           run "git add composer.json"
           run "git add composer.lock"
+
           default_commit "Updated #{git_name} to #{new_version}"
           commit = ask "What is the git commit?" [default_commit]
           commit = default_commit if commit.to_s == ''
