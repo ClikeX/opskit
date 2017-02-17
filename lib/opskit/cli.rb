@@ -114,23 +114,35 @@ module OpsKit
       end
     end
 
-    desc "update an composer package", "Updates a composer project"
-    def update_composer (root)
-      pkg = ask "What package name to search versions for?"
-
+    desc "update_wp", "updates a wordpress project"
+    def update_wp (root)
       return "#{root} does not exist" if !Dir.exist? root
+
       inside root do
         return "Not a git project" if !Dir.exist? ".git"
-        return "No composer file found" if !File.exist? "composer.json"
-        return "No bedrock project" if File.readlines("composer.json").grep(/webroot-installer/).size < 1
 
         run "git status"
         return if no? "git status looks okay?"
+
+        if yes? "Is this a composer project?"
+          update_composer_project
+        elsif yes? "Is this a wordpress project?"
+          update_wp_project
+        end
+      end
+    end
+
+    no_commands do
+
+      def update_composer_project
+        return "No composer file found" if !File.exist? "composer.json"
 
         say File.readlines("composer.json").grep(/http/).join("")
         if yes? "Fix https in composer?"
           run "sed -i 's/http/https/g' composer.json"
         end
+
+        pkg = ask "What package name to search versions for?"
 
         run "grep #{pkg} composer.json"
         old_version = ask "What was the old version"
@@ -138,15 +150,38 @@ module OpsKit
 
         run "sed -i 's/#{old_version}/#{new_version}/g' composer.json"
         run "composer update"
-        run "git diff"
-        run "git status"
+
+        git_commit new_version
+      end
+
+      def update_wp_project
+
+        inside 'httpdocs' do
+
+          if yes? 'install the wordpress website?'
+            url = ask 'What is the url'
+            title = ask 'what is the site title'
+            email= ask 'what is the admin email'
+
+            run "wp db create"
+            run "wp core install --url=#{url} --title=#{title} --admin_user=hoppinger --admin_password=hoppinger  --admin_email=#{email} --skip-email"
+          end
+
+          run "wp core update"
+        end
+        new_version = ask "What is the new wp version?"
+
+        git_commit new_version
+      end
+
+      def git_commit(new_version)
+        run 'git status'
         if yes? "commit the changes?"
           git_name = ask "What is the git name (branch = update/?{{version}})"
           git_branch = "update/#{git_name}#{new_version}"
 
           run "git checkout -b #{git_branch}"
-          run "git add composer.json"
-          run "git add composer.lock"
+          run "git add ."
 
           default_commit = "Updated #{git_name} to #{new_version}"
           commit = ask "What is the git commit? [#{default_commit}]"
@@ -156,9 +191,8 @@ module OpsKit
           run "git push --set-upstream origin #{git_branch}"
         end
       end
-    end
 
-    no_commands do
+
       def ask_for_url
         url = ask "What is the dev url? [#{OpsKit.configuration.url}]"
 
