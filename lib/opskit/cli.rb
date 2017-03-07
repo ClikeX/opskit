@@ -175,6 +175,7 @@ module OpsKit
       end
 
       def git_commit(new_version)
+        run 'git pull'
         run 'git status'
         if yes? "commit the changes?"
           git_name = ask "What is the git name (branch = update/?{{version}})"
