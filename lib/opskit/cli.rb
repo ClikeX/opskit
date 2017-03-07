@@ -165,7 +165,7 @@ module OpsKit
             email= ask 'what is the admin email'
 
             run "wp db create"
-            run "wp core install --url=#{url} --title=#{title} --admin_user=hoppinger --admin_password=hoppinger  --admin_email=#{email} --skip-email"
+            run "wp core install --url=#{url} --title=#{title} --admin_user=admin --admin_password=admin  --admin_email=#{email} --skip-email"
           end
 
           run "wp core update"
