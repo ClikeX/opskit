@@ -16,7 +16,7 @@ module OpsKit
       OpsKit.configure name
 
       if Dir.exist? OpsKit.configuration.project_root
-        return if no? "This project already exists do you want to overwrite it?"
+        exit 0 if no? "This project already exists do you want to overwrite it?"
         clean name
       end
 
@@ -45,7 +45,7 @@ module OpsKit
 
       example_files.each do |example_file|
 
-        new_file = example_file.sub(".example", '')
+        new_file = example_file.sub("\.example", '')
         new_file = new_file.sub("-example", '')
         if yes? "Copy example file #{example_file} to #{new_file}?"
           inside OpsKit.configuration.project_root do
@@ -82,7 +82,7 @@ module OpsKit
         return if no? "This will remove #{OpsKit.configuration.project_root} are you sure?"
         FileUtils.rm_rf(OpsKit.configuration.project_root)
       else
-        return if no? "Can´t find the project continue cleaning?"
+        exit 0 if no? "Can´t find the project continue cleaning?"
       end
 
       if yes? "clean vhost?"
